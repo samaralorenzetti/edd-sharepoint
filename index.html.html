@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EDD Metadata Model</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', system-ui, sans-serif; font-size: 14px; color: #323130; background: #fff; }
+
+  /* ── TABS ── */
+  .tab-bar {
+    display: flex;
+    gap: 0;
+    border-bottom: 2px solid #e1e1e1;
+    margin-bottom: 16px;
+    background: #fff;
+  }
+  .tab-btn {
+    padding: 10px 22px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #605e5c;
+    background: none;
+    border: none;
+    border-bottom: 3px solid transparent;
+    margin-bottom: -2px;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: color .15s, border-color .15s;
+  }
+  .tab-btn:hover { color: #1565c0; }
+  .tab-btn.active { color: #1565c0; border-bottom-color: #1565c0; }
+
+  /* ── PANELS ── */
+  .tab-panel { display: none; }
+  .tab-panel.active { display: block; }
+
+  /* ── ALERT BAR ── */
+  .alert {
+    background: #EFF6FC;
+    border-left: 4px solid #1565c0;
+    border-radius: 0 4px 4px 0;
+    padding: 10px 14px;
+    font-size: 12px;
+    color: #0a4a8a;
+    margin-bottom: 18px;
+    line-height: 1.55;
+  }
+
+  /* ── LEGEND ── */
+  .legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    align-items: center;
+    margin-bottom: 14px;
+    font-size: 11px;
+    color: #605e5c;
+  }
+  .legend strong { color: #323130; margin-right: 2px; }
+  .badge { display: inline-block; font-size: 10px; font-weight: 600; padding: 1px 6px; border-radius: 3px; white-space: nowrap; }
+  .b-new  { background: #FDE7E9; color: #7A0000; }
+  .b-opt  { background: #F3F2F1; color: #4A4A48; }
+  .b-man  { background: #DFF6DD; color: #1E4620; }
+  .b-auto { background: #EFF6FC; color: #0a4a8a; }
+  .b-dg   { background: #EDE9FF; color: #32257A; }
+  .b-it   { background: #FDE9E3; color: #7A2600; }
+  .b-fn   { background: #FEF3D8; color: #6B3F00; }
+
+  /* ── TABLE ── */
+  .meta-tbl {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 11px;
+  }
+  .meta-tbl thead th {
+    background: #1565c0;
+    color: #fff;
+    padding: 8px 10px;
+    text-align: left;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: .3px;
+  }
+  .meta-tbl tbody td {
+    padding: 7px 10px;
+    border-bottom: 1px solid #EDEBE9;
+    vertical-align: top;
+    color: #323130;
+  }
+  .meta-tbl tbody tr:nth-child(even) td { background: #FAFAFA; }
+  .meta-tbl tbody tr:hover td { background: #F3F7FD; }
+
+  /* group header row */
+  .meta-tbl .grp td {
+    background: #D0E3F5;
+    color: #003f7a;
+    font-weight: 700;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: .6px;
+    padding: 5px 10px;
+    border-bottom: 1px solid #B0CCE8;
+  }
+  .meta-tbl .grp td { background: #D0E3F5 !important; }
+
+  .desc-col { color: #605e5c; }
+  .badge-wrap { display: flex; gap: 3px; flex-wrap: wrap; }
+</style>
+</head>
+<body>
+
+<div class="alert">
+  Completion of all mandatory metadata is required for a Data Product to be in a <strong>published state</strong> in Microsoft Purview.
+  Fields marked <span class="badge b-opt">Opt</span> are optional.
+  Fields marked <span class="badge b-new">New</span> were introduced in November 2025.
+</div>
+
+<!-- LEGEND -->
+<div class="legend">
+  <strong>Legend:</strong>
+  <span><span class="badge b-man">Manual</span> Populated manually</span>
+  <span><span class="badge b-auto">Auto</span> System-populated</span>
+  <span><span class="badge b-opt">Opt</span> Optional</span>
+  <span><span class="badge b-new">New</span> Nov 2025</span>
+  <span><span class="badge b-dg">Data Gov.</span></span>
+  <span><span class="badge b-it">IT ADI</span></span>
+  <span><span class="badge b-fn">Function</span></span>
+</div>
+
+<!-- TAB BAR -->
+<div class="tab-bar">
+  <button class="tab-btn active" onclick="switchTab('edd', this)">Enterprise Data Domain</button>
+  <button class="tab-btn" onclick="switchTab('dp', this)">Data Product</button>
+  <button class="tab-btn" onclick="switchTab('da', this)">Data Asset</button>
+</div>
+
+<!-- ═══════════════════════════════════════
+     PANEL 1 — ENTERPRISE DATA DOMAIN
+════════════════════════════════════════ -->
+<div id="panel-edd" class="tab-panel active">
+  <table class="meta-tbl">
+    <thead>
+      <tr>
+        <th style="width:130px">Category</th>
+        <th>Attribute</th>
+        <th>Description</th>
+        <th style="width:80px">Population</th>
+        <th style="width:80px">Owner</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr class="grp"><td colspan="5">Accountability</td></tr>
+      <tr>
+        <td></td>
+        <td>Functional owner</td>
+        <td class="desc-col">Name of the Domain Functional Owner</td>
+        <td><span class="badge b-man">Manual</span></td>
+        <td><span class="badge b-fn">Function</span></td>
+      </tr>
+      <tr>
+        <td></td>
+        <td>Technical owner</td>
+        <td class="desc-col">Name of the DAPS Domain Owner (DAPS Product Manager)</td>
+        <td><span class="badge b-man">Manual</span></td>
+        <td><span class="badge b-it">IT ADI</span></td>
+      </tr>
+      <tr>
+        <td></td>
+        <td>Domain steward <span class="badge b-new">New</span></td>
+        <td class="desc-col">Person responsible for overseeing quality, integrity, and governance of the domain metadata</td>
+        <td><span class="badge b-man">Manual</span></td>
+        <td><span class="badge b-dg">Data Gov.</span></td>
+      </tr>
+
+      <tr class="grp"><td colspan="5">General Information</td></tr>
+      <tr>
+        <td></td>
+        <td>Domain name</td>
+        <td class="desc-col">Name of the Enterprise Data Domain</td>
+        <td><span class="badge b-man">Manual</span></td>
+        <td><span class="badge b-dg">Data Gov.</span></td>
+      </tr>
+      <tr>
+        <td></td>
+        <td>Description</td>
+        <td class="desc-col">Business context and explanation of the domain's value proposition</td>
+        <td><span class="badge b-man">Manual</span></td>
+        <td><span class="badge b-dg">Data Gov.</span></td>
+      </tr>
+      <tr>
+        <td></td>
+        <td>Key data sources</td>
+        <td class="desc-col">Main systems or platforms providing data to the domain</td>
+        <td><span class="badge b-man">Manual</span></td>
+        <td><span class="badge b-it">IT ADI</span></td>
+      </tr>
+      <tr>
+        <td></td>
+        <td>APM entry</td>
+        <td class="desc-col">Reference to the APM ID registered in ServiceNow for the Enterprise Data Domain</td>
+        <td><span class="badge b-man">Manual</span></td>
+        <td><span class="badge b-it">IT ADI</span></td>
+      </tr>
+      <tr>
+        <td></td>
+        <td>Domain roadmap</td>
+        <td class="desc-col">High-level plan outlining upcoming data products, enhancements, or initiatives</td>
+        <td><span class="badge b-man">Manual</span></td>
+        <td><span class="badge b-fn">Function</span></td>
+      </tr>
+
+      <tr class="grp"><td colspan="5">Governance</td></tr>
+      <tr>
+        <td></td>
+        <td>Review frequency <span class="badge b-new">New</span></td>
+        <td class="desc-col">Frequency at which the domain metadata should be reviewed to ensure accuracy and relevance</td>
+        <td><span class="badge b-man">Manual</span></td>
+        <td><span class="badge b-dg">Data Gov.</span></td>
+      </tr>
+      <tr>
+        <td></td>
+        <td>Next review date <span class="badge b-new">New</span></td>
+        <td class="desc-col">Scheduled date for the next metadata review of the domain</td>
+        <td><span class="badge b-auto">Auto</span></td>
+        <td><span class="badge b-dg">Data Gov.</span></td>
+      </tr>
+      <tr>
+        <td></td>
+        <td>Last reviewed <span class="badge b-new">New</span></td>
+        <td class="desc-col">Date when the domain metadata was last reviewed by the Data Steward</td>
+        <td><span class="badge b-man">Manual</span></td>
+        <td><span class="badge b-dg">Data Gov.</span></td>
+      </tr>
+      <tr>
+        <td></td>
+        <td>Reviewed by <span class="badge b-new">New</span></td>
+        <td class="desc-col">Name of the Data Steward who performed the metadata review</td>
+        <td><span class="badge b-man">Manual</span></td>
+        <td><span class="badge b-dg">Data Gov.</span></td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ═══════════════════════════════════════
+     PANEL 2 — DATA PRODUCT
+════════════════════════════════════════ -->
+<div id="panel-dp" class="tab-panel">
+  <table class="meta-tbl">
+    <thead>
+      <tr>
+        <th style="width:130px">Group</th>
+        <th>Attribute</th>
+        <th>Description</th>
+        <th style="width:80px">Population</th>
+        <th style="width:80px">Owner</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr class="grp"><td colspan="5">Access</td></tr>
+      <tr><td></td><td>Warehouse <span class="badge b-new">New</span></td><td class="desc-col">Data warehouse where the Data Assets of the Data Product are stored</td><td><span class="badge b-man">Manual</span></td><td><span class="badge b-it">IT ADI</span></td></tr>
+      <tr><td></td><td>Database <span class="badge b-new">New</span></td><td class="desc-col">Database within the warehouse where the data resides</td><td><span class="badge b-man">Manual</span></td><td><span class="badge b-it">IT ADI</span></td></tr>
+      <tr><td></td><td>Schema <span class="badge b-new">New</span></td><td class="desc-col">Schema containing the Data Assets</td><td><span class="badge b-man">Manual</span></td><td><span class="badge b-it">IT ADI</span></td></tr>
+      <tr><td></td><td>AAD groups <span class="badge b-new">New</span></td><td class="desc-col">Azure Active Directory groups used to manage access to the Data Product</td><td><span class="badge b-man">Manual</span></td><td><span class="badge b-it">IT ADI</span></td></tr>
+      <tr><td></td><td>Roles <span class="badge b-new">New</span></td><td class="desc-col">SAP or non-SAP roles required to access the data (if applicable)</td><td><span class="badge b-man">Manual</span></td><td><span class="badge b-it">IT ADI</span></td></tr>
+      <tr><td></td><td>Data specific access input <span class="badge b-new">New</span> <span class="badge b-opt">Opt</span></td><td class="desc-col">Additional access conditions such as retailer name, market, or other specific restrictions</td><td><span class="badge b-man">Manual</span></td><td><span class="badge b-it">IT ADI</span></td></tr>
+
+      <tr class="grp"><td colspan="5">General Info</td></tr>
+      <tr><td></td><td>Product description</td><td class="desc-col">Detailed explanation of the Data Product's purpose and value proposition</td><td><span class="badge b-man">Manual</span></td><td><span class="badge b-fn">Function</span></td></tr>
+      <tr><td></td><td>Short description <span class="badge b-new">New</span></td><td class="desc-col">Concise summary of the Data Product</td><td><span class="badge b-man">Manual</span></td><td><span class="badge b-fn">Function</span></td></tr>
+      <tr><td></td><td>Audience <span class="badge b-new">New</span> <span class="badge b-opt">Opt</span></td><td class="desc-col">Intended users or roles benefiting from this Data Product</td><td><span class="badge b-man">Manual</span></td><td><span class="badge b-fn">Function</span></td></tr>
+      <tr><td></td><td>Consumption method</td><td class="desc-col">How the Data Product is consumed (e.g., dashboard, API, dataset)</td><td><span class="badge b-man">Manual</span></td><td><span class="badge b-it">IT ADI</span></td></tr>
+      <tr><td></td><td>Function <span class="badge b-new">New</span></td><td class="desc-col">Business function owning the Data Product (e.g., Finance, Commercial)</td><td><span class="badge b-man">Manual</span></td><td><span class="badge b-fn">Function</span></td></tr>
+      <tr><td></td><td>Sub-function <span class="badge b-new">New</span></td><td class="desc-col">Sub-function owning the Data Product (e.g., Decision Support – AP)</td><td><span class="badge b-man">Manual</span></td><td><span class="badge b-fn">Function</span></td></tr>
+      <tr><td></td><td>Owning market / GMB <span class="badge b-new">New</span> <span class="badge b-opt">Opt</span></td><td class="desc-col">Market or business unit owning the Data Product</td><td><span class="badge b-man">Manual</span></td><td><span class="badge b-it">IT ADI</span></td></tr>
+      <tr><td></td><td>Product line indicator</td><td class="desc-col">Differentiates Global (PL3) vs Local Data Products</td><td><span class="badge b-man">Manual</span></td><td><span class="badge b-it">IT ADI</span></td></tr>
+      <tr><td></td><td>Contains sensitive data</td><td class="desc-col">Indicates whether the Data Product contains Personally Identifiable Information (PII)</td><td><span class="badge b-man">Manual</span></td><td><span class="badge b-it">IT ADI</span></td></tr>
+      <tr><td></td><td>Info classification</td><td class="desc-col">Security classification per the Nestlé Information Classification Standard (Public, Internal, Confidential, Highly Confidential)</td><td><span class="badge b-man">Manual</span></td><td><span class="badge b-fn">Function</span></td></tr>
+      <tr><td></td><td>Business criticality</td><td class="desc-col">Major, Significant, Moderate, or Negligible</td><td><span class="badge b-man">Manual</span></td><td><span class="badge b-fn">Function</span></td></tr>
+      <tr><td></td><td>Data product category</td><td class="desc-col">Type of Data Product — Basic, Analytical, or Advanced</td><td><span class="badge b-man">Manual</span></td><td><span class="badge b-dg">Data Gov.</span></td></tr>
+      <tr><td></td><td>Roadmap <span class="badge b-new">New</span></td><td class="desc-col">Planned future development, deployment, and evolution of the Data Product</td><td><span class="badge b-man">Manual</span></td><td><span class="badge b-it">IT ADI</span></td></tr>
+      <tr><td></td><td>Known issues / limitations <span class="badge b-new">New</span> <span class="badge b-opt">Opt</span></td><td class="desc-col">Known constraints or limitations users should be aware of</td><td><span class="badge b-man">Manual</span></td><td><span class="badge b-it">IT ADI</span></td></tr>
+      <tr><td></td><td>Design documentation</td><td class="desc-col">Link to supporting documentation (e.g., Solution Design Document – SDD)</td><td><span class="badge b-man">Manual</span></td><td><span class="badge b-it">IT ADI</span></td></tr>
+      <tr><td></td><td>Data product maturity score <span class="badge b-new">New</span></td><td class="desc-col">Numerical score representing the maturity level, based on the Maturity Assessment framework</td><td><span class="badge b-auto">Auto</span></td><td><span class="badge b-dg">Data Gov.</span></td></tr>
+
+      <tr class="grp"><td colspan="5">Coverage &amp; Quality</td></tr>
+      <tr><td></td><td>Coverage dashboard</td><td class="desc-col">Link to the dashboard displaying data coverage metrics</td><td><span class="badge b-man">Manual</span></td><td><span class="badge b-dg">Data Gov.</span></td></tr>
+      <tr><td></td><td>Coverage <span class="badge b-new">New</span> <span class="badge b-opt">Opt</span></td><td class="desc-col">Geographical and market scope — regions, countries, zones, or business markets covered</td><td><span class="badge b-man">Manual</span></td><td><span class="badge b-dg">Data Gov.</span></td></tr>
+      <tr><td></td><td>Data origin <span class="badge b-new">New</span></td><td class="desc-col">Source systems or Data Domains feeding the Data Product</td><td><span class="badge b-man">Manual</span></td><td><span class="badge b-it">IT ADI</span></td></tr>
+      <tr><td></td><td>Data quality score <span class="badge b-new">New</span> <span class="badge b-opt">Opt</span></td><td class="desc-col">Quantitative measure of the Data Product's data quality</td><td><span class="badge b-man">Manual</span></td><td><span class="badge b-dg">Data Gov.</span></td></tr>
+
+      <tr class="grp"><td colspan="5">Governance</td></tr>
+      <tr><td></td><td>Last reviewed <span class="badge b-new">New</span></td><td class="desc-col">Date when the Data Product metadata was last reviewed by the Data Steward</td><td><span class="badge b-man">Manual</span></td><td><span class="badge b-dg">Data Gov.</span></td></tr>
+      <tr><td></td><td>Review frequency <span class="badge b-new">New</span></td><td class="desc-col">Frequency at which the Data Product metadata should be reviewed</td><td><span class="badge b-man">Manual</span></td><td><span class="badge b-dg">Data Gov.</span></td></tr>
+      <tr><td></td><td>Next review date <span class="badge b-new">New</span></td><td class="desc-col">Scheduled date for the next metadata review</td><td><span class="badge b-auto">Auto</span></td><td><span class="badge b-dg">Data Gov.</span></td></tr>
+      <tr><td></td><td>Reviewed by <span class="badge b-new">New</span></td><td class="desc-col">Name of the Data Steward who reviewed the Data Product metadata</td><td><span class="badge b-auto">Auto</span></td><td><span class="badge b-dg">Data Gov.</span></td></tr>
+
+      <tr class="grp"><td colspan="5">Accountability</td></tr>
+      <tr><td></td><td>Data product owner</td><td class="desc-col">Accountable for the overall strategy and value delivery of the Data Product (IT ADI DAPS)</td><td><span class="badge b-man">Manual</span></td><td><span class="badge b-it">IT ADI</span></td></tr>
+      <tr><td></td><td>Data product manager</td><td class="desc-col">Responsible for managing the lifecycle, roadmap, and requirements (Functional Owner)</td><td><span class="badge b-man">Manual</span></td><td><span class="badge b-fn">Function</span></td></tr>
+      <tr><td></td><td>ADI regional owner</td><td class="desc-col">IT regional owner responsible for the Data Product</td><td><span class="badge b-man">Manual</span></td><td><span class="badge b-it">IT ADI</span></td></tr>
+      <tr><td></td><td>Data product steward <span class="badge b-new">New</span></td><td class="desc-col">Ensures data quality and governance (DG Domain Steward)</td><td><span class="badge b-man">Manual</span></td><td><span class="badge b-dg">Data Gov.</span></td></tr>
+
+      <tr class="grp"><td colspan="5">Usage &amp; Adoption</td></tr>
+      <tr><td></td><td>Learning and training</td><td class="desc-col">Links to training materials and capability-building resources</td><td><span class="badge b-man">Manual</span></td><td><span class="badge b-fn">Function</span></td></tr>
+      <tr><td></td><td>Number of users <span class="badge b-new">New</span> <span class="badge b-opt">Opt</span></td><td class="desc-col">Number of users who consumed the Data Product in the last completed month</td><td><span class="badge b-auto">Auto</span></td><td><span class="badge b-dg">Data Gov.</span></td></tr>
+      <tr><td></td><td>Subscribers <span class="badge b-new">New</span> <span class="badge b-opt">Opt</span></td><td class="desc-col">Number of users or systems actively consuming the Data Product</td><td><span class="badge b-auto">Auto</span></td><td><span class="badge b-dg">Data Gov.</span></td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ═══════════════════════════════════════
+     PANEL 3 — DATA ASSET
+════════════════════════════════════════ -->
+<div id="panel-da" class="tab-panel">
+  <table class="meta-tbl">
+    <thead>
+      <tr>
+        <th style="width:130px">Group</th>
+        <th>Attribute</th>
+        <th>Description</th>
+        <th style="width:80px">Population</th>
+        <th style="width:80px">Owner</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr class="grp"><td colspan="5">Access</td></tr>
+      <tr><td></td><td>AAD groups</td><td class="desc-col">Azure Active Directory groups managing access to this Data Asset</td><td><span class="badge b-man">Manual</span></td><td><span class="badge b-it">IT ADI</span></td></tr>
+      <tr><td></td><td>SAP role</td><td class="desc-col">SAP role(s) required to access this data (if applicable)</td><td><span class="badge b-man">Manual</span></td><td><span class="badge b-it">IT ADI</span></td></tr>
+      <tr><td></td><td>Roles</td><td class="desc-col">Internal business or system roles required for access, not mapped to Azure AD groups</td><td><span class="badge b-man">Manual</span></td><td><span class="badge b-it">IT ADI</span></td></tr>
+
+      <tr class="grp"><td colspan="5">General Info</td></tr>
+      <tr><td></td><td>Description</td><td class="desc-col">Detailed explanation of the Data Asset's purpose, content, and business relevance</td><td><span class="badge b-man">Manual</span></td><td><span class="badge b-it">IT ADI</span></td></tr>
+      <tr><td></td><td>Contains sensitive data</td><td class="desc-col">Indicates whether the Data Asset contains sensitive information requiring special handling</td><td><span class="badge b-auto">Auto</span></td><td><span class="badge b-dg">Data Gov.</span></td></tr>
+      <tr><td></td><td>Info classification</td><td class="desc-col">Security classification level per the Nestlé Information Classification Standard</td><td><span class="badge b-auto">Auto</span></td><td><span class="badge b-dg">Data Gov.</span></td></tr>
+      <tr><td></td><td>Contains PII</td><td class="desc-col">Indicates whether the Data Asset contains Personally Identifiable Information (PII)</td><td><span class="badge b-man">Manual</span></td><td><span class="badge b-dg">Data Gov.</span></td></tr>
+      <tr><td></td><td>Data retention period</td><td class="desc-col">Duration for which the data is retained (in years)</td><td><span class="badge b-man">Manual</span></td><td><span class="badge b-dg">Data Gov.</span></td></tr>
+      <tr><td></td><td>Business criticality</td><td class="desc-col">Major, Significant, Moderate, or Negligible</td><td><span class="badge b-man">Manual</span></td><td><span class="badge b-it">IT ADI</span></td></tr>
+      <tr><td></td><td>Product line indicator</td><td class="desc-col">Differentiates Global (PL3) and Local (PL4/5) data assets</td><td><span class="badge b-auto">Auto</span></td><td><span class="badge b-it">IT ADI</span></td></tr>
+      <tr><td></td><td>Asset status</td><td class="desc-col">Ready to Use, Hidden, or Technical Use</td><td><span class="badge b-auto">Auto</span></td><td><span class="badge b-it">IT ADI</span></td></tr>
+      <tr><td></td><td>Short description</td><td class="desc-col">Concise summary of the Data Asset's content and purpose</td><td><span class="badge b-man">Manual</span></td><td><span class="badge b-it">IT ADI</span></td></tr>
+      <tr><td></td><td>Data domain</td><td class="desc-col">Enterprise Data Domain to which the Data Asset belongs</td><td><span class="badge b-man">Manual</span></td><td><span class="badge b-it">IT ADI</span></td></tr>
+      <tr><td></td><td>Function</td><td class="desc-col">Business function owning the data (e.g., Finance, Commercial)</td><td><span class="badge b-man">Manual</span></td><td><span class="badge b-fn">Function</span></td></tr>
+      <tr><td></td><td>Sub-function</td><td class="desc-col">Sub-function owning the data (e.g., Decision Support – AP)</td><td><span class="badge b-man">Manual</span></td><td><span class="badge b-fn">Function</span></td></tr>
+      <tr><td></td><td>Owning market / GMB <span class="badge b-opt">Opt</span></td><td class="desc-col">Market or business unit owning the Data Asset</td><td><span class="badge b-man">Manual</span></td><td><span class="badge b-it">IT ADI</span></td></tr>
+
+      <tr class="grp"><td colspan="5">Governance</td></tr>
+      <tr><td></td><td>Review frequency</td><td class="desc-col">Frequency at which the Data Asset should be reviewed to ensure accuracy and relevance</td><td><span class="badge b-man">Manual</span></td><td><span class="badge b-dg">Data Gov.</span></td></tr>
+      <tr><td></td><td>Review owner</td><td class="desc-col">Person responsible for periodic reviews (DG Domain Data Steward)</td><td><span class="badge b-man">Manual</span></td><td><span class="badge b-dg">Data Gov.</span></td></tr>
+      <tr><td></td><td>Last reviewed by / date</td><td class="desc-col">Person who last reviewed the Data Asset and the date of review</td><td><span class="badge b-man">Manual</span></td><td><span class="badge b-dg">Data Gov.</span></td></tr>
+      <tr><td></td><td>Next review date</td><td class="desc-col">Scheduled date for the next review</td><td><span class="badge b-auto">Auto</span></td><td><span class="badge b-dg">Data Gov.</span></td></tr>
+
+      <tr class="grp"><td colspan="5">Coverage &amp; Quality</td></tr>
+      <tr><td></td><td>Refresh frequency</td><td class="desc-col">Frequency at which the Data Asset is refreshed or updated</td><td><span class="badge b-auto">Auto</span></td><td><span class="badge b-it">IT ADI</span></td></tr>
+      <tr><td></td><td>Refresh date <span class="badge b-opt">Opt</span></td><td class="desc-col">Most recent date on which the Data Asset was refreshed</td><td><span class="badge b-man">Manual</span></td><td><span class="badge b-it">IT ADI</span></td></tr>
+      <tr><td></td><td>Data quality score <span class="badge b-opt">Opt</span></td><td class="desc-col">Quantitative measure of accuracy, completeness, and reliability</td><td><span class="badge b-auto">Auto</span></td><td><span class="badge b-it">IT ADI</span></td></tr>
+
+      <tr class="grp"><td colspan="5">Source &amp; Transformation</td></tr>
+      <tr><td></td><td>Originating source system</td><td class="desc-col">System or platform from which the data originates</td><td><span class="badge b-man">Manual</span></td><td><span class="badge b-it">IT ADI</span></td></tr>
+      <tr><td></td><td>Transformation logic <span class="badge b-opt">Opt</span></td><td class="desc-col">Logic or rules applied to transform the data from source to Data Asset</td><td><span class="badge b-man">Manual</span></td><td><span class="badge b-it">IT ADI</span></td></tr>
+
+      <tr class="grp"><td colspan="5">Accountability</td></tr>
+      <tr><td></td><td>Data steward</td><td class="desc-col">DG Domain Data Steward and Technical Data Steward responsible for governance</td><td><span class="badge b-man">Manual</span></td><td><span class="badge b-dg">Data Gov.</span></td></tr>
+      <tr><td></td><td>Data owner</td><td class="desc-col">Person who owns the data from a business perspective (Functional / Business owner)</td><td><span class="badge b-man">Manual</span></td><td><span class="badge b-fn">Function</span></td></tr>
+    </tbody>
+  </table>
+</div>
+
+<script>
+  function switchTab(name, el) {
+    document.querySelectorAll('.tab-btn').forEach(function(b) { b.classList.remove('active'); });
+    document.querySelectorAll('.tab-panel').forEach(function(p) { p.classList.remove('active'); });
+    el.classList.add('active');
+    document.getElementById('panel-' + name).classList.add('active');
+  }
+</script>
+
+</body>
+</html>
